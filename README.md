@@ -1,16 +1,16 @@
-# Declawed (A Mail Bot)
+# Declawed: A Configurable, Promptable AI Mail Assisty Kitty
 
-A local Model Context Protocol (MCP) server connecing LLM platform APIs (ie  Claude Desktop), or locally hosted models to your mail account. 
-Ssimple. 
-No Surprises, unlike the blue-plate-special-crustacean of the day.
-Automates review, classification, and action -- response, deletion, archiving -- for inbox items.
+A local Model Context Protocol (MCP) server and LLM integration platform. Built to connect to LLM APIs - be itClaude Desktop, *others*... or locally hosted models. Executes your prompts to manage your mail, while you... watch Fellini films, solve climate change, sip Mai Tais, or.... whatever. 
+
+Ssssimple. Siamsese, if you please.... Eats the blue-plate-crustacean for breakfast.
+
+Infinitely mod-able.  Dead simple. Privacy centric.  
 
 ---
 
 # Scope 
 
-## Current implementaiton contemplates: Claude Desktop + Local Custom Model Context Protocol Server + Goog-MX'ed SMTP for your Registered, DNS'd XXX.YYY domain
-(highly config'able- more to follow)
+## Current implementation contemplates: Claude Desktop + Custom, Local Model Context Protocol Server + Commercial SMTP Server (MX'config’d properly) + your DNS-config’d XXX.YYY
 
 ---
 
@@ -268,3 +268,5 @@ assistant/
 ├── tsconfig.json         # TypeScript compiler config
 └── README.md             # This file
 ```
+
+

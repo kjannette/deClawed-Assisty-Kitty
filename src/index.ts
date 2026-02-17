@@ -12,9 +12,53 @@ import path from "path";
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const PROJECT_ROOT = path.resolve(__dirname, "..");
 const CREDENTIALS_PATH = path.join(PROJECT_ROOT, "credentials.json");
-const TOKEN_PATH = path.join(PROJECT_ROOT, "token.json");
-const SUMMARY_PATH = path.join(PROJECT_ROOT, "summary.json");
+const ACCOUNTS_PATH = path.join(PROJECT_ROOT, "accounts.json");
 const PROMPT_PATH = path.join(PROJECT_ROOT, "classify-emails.txt");
+
+// ---------------------------------------------------------------------------
+// Account configuration
+// ---------------------------------------------------------------------------
+interface AccountConfig {
+  label: string;
+  tokenFile: string;
+}
+
+interface AccountsMap {
+  [key: string]: AccountConfig;
+}
+
+function loadAccounts(): AccountsMap {
+  if (!fs.existsSync(ACCOUNTS_PATH)) {
+    throw new Error(`Missing accounts.json at ${ACCOUNTS_PATH}.`);
+  }
+  return JSON.parse(fs.readFileSync(ACCOUNTS_PATH, "utf-8"));
+}
+
+function getTokenPath(account: string): string {
+  const accounts = loadAccounts();
+  const acct = accounts[account];
+  if (!acct) {
+    const available = Object.keys(accounts).join(", ");
+    throw new Error(
+      `Unknown account "${account}". Available accounts: ${available}`
+    );
+  }
+  return path.join(PROJECT_ROOT, acct.tokenFile);
+}
+
+function getSummaryPath(account: string): string {
+  if (account === "work") {
+    return path.join(PROJECT_ROOT, "summary.json");
+  }
+  return path.join(PROJECT_ROOT, `summary-${account}.json`);
+}
+
+const VALID_ACCOUNTS = ["work", "secondary"] as const;
+const accountSchema = z
+  .enum(VALID_ACCOUNTS)
+  .describe(
+    "Which email account to use: \"work\" (sj@sjdev.co) or \"secondary\" (ken.jannette@gmail.com)"
+  );
 
 // ---------------------------------------------------------------------------
 // Load classification prompt
@@ -28,17 +72,19 @@ function loadClassificationPrompt(): string {
 }
 
 // ---------------------------------------------------------------------------
-// Gmail auth helper
+// Gmail auth helper — parameterized by account key
 // ---------------------------------------------------------------------------
-function getGmailClient(): gmail_v1.Gmail {
+function getGmailClient(account: string): gmail_v1.Gmail {
+  const tokenPath = getTokenPath(account);
+
   if (!fs.existsSync(CREDENTIALS_PATH)) {
     throw new Error(
       `Missing credentials.json at ${CREDENTIALS_PATH}. Run "npm run auth" first.`
     );
   }
-  if (!fs.existsSync(TOKEN_PATH)) {
+  if (!fs.existsSync(tokenPath)) {
     throw new Error(
-      `Missing token.json at ${TOKEN_PATH}. Run "npm run auth" first.`
+      `Missing token file at ${tokenPath} for account "${account}". Run "npm run auth" first.`
     );
   }
 
@@ -52,17 +98,17 @@ function getGmailClient(): gmail_v1.Gmail {
     redirect_uris[0]
   );
 
-  const token = JSON.parse(fs.readFileSync(TOKEN_PATH, "utf-8"));
+  const token = JSON.parse(fs.readFileSync(tokenPath, "utf-8"));
   oAuth2Client.setCredentials(token);
 
   // Persist refreshed tokens automatically
   oAuth2Client.on("tokens", (newTokens) => {
-    const current = JSON.parse(fs.readFileSync(TOKEN_PATH, "utf-8"));
+    const current = JSON.parse(fs.readFileSync(tokenPath, "utf-8"));
     fs.writeFileSync(
-      TOKEN_PATH,
+      tokenPath,
       JSON.stringify({ ...current, ...newTokens }, null, 2)
     );
-    console.error("Token refreshed and saved.");
+    console.error(`Token refreshed and saved for account "${account}".`);
   });
 
   return google.gmail({ version: "v1", auth: oAuth2Client });
@@ -117,13 +163,13 @@ const server = new McpServer({
 });
 
 // ---------------------------------------------------------------------------
-// Prompt: review_emails
+// Prompt: review_emails (work account)
 // ---------------------------------------------------------------------------
 server.registerPrompt(
   "review_emails",
   {
     description:
-      "Review inbox, classify job application emails (A/B/C/D), delete A+C, summarize B+D.",
+      "Review WORK inbox (sj@sjdev.co): classify job application emails (A/B/C/D), delete A+C, summarize B+D.",
   },
   () => {
     const instructions = loadClassificationPrompt();
@@ -133,8 +179,38 @@ server.registerPrompt(
           role: "user" as const,
           content: {
             type: "text" as const,
-            text: instructions ||
-              "Review my new emails and classify them by job application category.",
+            text:
+              `ACCOUNT: Use account = "work" for ALL tool calls in this session.\n\n` +
+              (instructions ||
+                "Review my new emails and classify them by job application category."),
+          },
+        },
+      ],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Prompt: review_secondary_emails (secondary account)
+// ---------------------------------------------------------------------------
+server.registerPrompt(
+  "review_secondary_emails",
+  {
+    description:
+      "Review SECONDARY inbox (ken.jannette@gmail.com): classify job application emails (A/B/C/D), delete A+C, summarize B+D.",
+  },
+  () => {
+    const instructions = loadClassificationPrompt();
+    return {
+      messages: [
+        {
+          role: "user" as const,
+          content: {
+            type: "text" as const,
+            text:
+              `ACCOUNT: Use account = "secondary" for ALL tool calls in this session.\n\n` +
+              (instructions ||
+                "Review my new emails and classify them by job application category."),
           },
         },
       ],
@@ -149,10 +225,11 @@ server.registerTool(
   "fetch_new_emails",
   {
     description:
-      "Fetch unread emails from the Gmail inbox. Returns sender, date, " +
+      "Fetch unread emails from a Gmail inbox. Returns sender, date, " +
       "subject, message ID, and body text for each message. The message IDs " +
-      "can be passed to delete_emails later.",
+      "can be passed to delete_emails later. Specify which account to fetch from.",
     inputSchema: {
+      account: accountSchema,
       maxResults: z
         .number()
         .min(1)
@@ -160,9 +237,9 @@ server.registerTool(
         .describe("Maximum number of unread emails to fetch (1-100)"),
     },
   },
-  async ({ maxResults }) => {
+  async ({ account, maxResults }) => {
     try {
-      const gmail = getGmailClient();
+      const gmail = getGmailClient(account);
 
       const listResponse = await gmail.users.messages.list({
         userId: "me",
@@ -246,16 +323,18 @@ server.registerTool(
   {
     description:
       "Move emails to trash by their Gmail message IDs. Use this for " +
-      "category A (acknowledgements) and category C (rejections) emails.",
+      "category A (acknowledgements) and category C (rejections) emails. " +
+      "Specify which account the emails belong to.",
     inputSchema: {
+      account: accountSchema,
       messageIds: z
         .array(z.string())
         .describe("Array of Gmail message IDs to move to trash"),
     },
   },
-  async ({ messageIds }) => {
+  async ({ account, messageIds }) => {
     try {
-      const gmail = getGmailClient();
+      const gmail = getGmailClient(account);
       const results: string[] = [];
 
       for (const id of messageIds) {
@@ -311,8 +390,10 @@ server.registerTool(
     description:
       "Append classified email entries to the local summary file. Use this " +
       "for category B (advancement to next step) and category D (other) emails. " +
-      "Each entry records the sender, date, subject, and category.",
+      "Each entry records the sender, date, subject, and category. " +
+      "Specify which account the emails belong to.",
     inputSchema: {
+      account: accountSchema,
       entries: z
         .array(
           z.object({
@@ -332,12 +413,14 @@ server.registerTool(
         .describe("Array of email summary entries to append"),
     },
   },
-  async ({ entries }) => {
+  async ({ account, entries }) => {
     try {
+      const summaryPath = getSummaryPath(account);
+
       // Load existing summary or start fresh
       let summary: SummaryEntry[] = [];
-      if (fs.existsSync(SUMMARY_PATH)) {
-        summary = JSON.parse(fs.readFileSync(SUMMARY_PATH, "utf-8"));
+      if (fs.existsSync(summaryPath)) {
+        summary = JSON.parse(fs.readFileSync(summaryPath, "utf-8"));
       }
 
       const now = new Date().toISOString();
@@ -347,7 +430,7 @@ server.registerTool(
       }));
 
       summary.push(...newEntries);
-      fs.writeFileSync(SUMMARY_PATH, JSON.stringify(summary, null, 2));
+      fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
 
       return {
         content: [
@@ -356,7 +439,7 @@ server.registerTool(
             text:
               `Appended ${newEntries.length} entry/entries to summary.\n` +
               `Total entries in summary: ${summary.length}\n` +
-              `Summary file: ${SUMMARY_PATH}`,
+              `Summary file: ${summaryPath}`,
           },
         ],
       };
