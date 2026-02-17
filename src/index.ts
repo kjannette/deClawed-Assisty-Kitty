@@ -425,14 +425,29 @@ server.registerTool(
         summary = JSON.parse(fs.readFileSync(summaryPath, "utf-8"));
       }
 
-      const now = new Date().toISOString();
+      const now = new Date();
+      const nowIso = now.toISOString();
       const newEntries: SummaryEntry[] = entries.map((e) => ({
         ...e,
-        addedAt: now,
+        addedAt: nowIso,
       }));
 
       summary.push(...newEntries);
+
+      // Purge entries older than 30 days
+      const RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
+      const cutoff = now.getTime() - RETENTION_MS;
+      const beforePurge = summary.length;
+      summary = summary.filter(
+        (entry) => new Date(entry.addedAt).getTime() >= cutoff
+      );
+      const purged = beforePurge - summary.length;
+
       fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
+
+      const purgeNote = purged > 0
+        ? `\nPurged ${purged} entry/entries older than 30 days.`
+        : "";
 
       return {
         content: [
@@ -441,7 +456,8 @@ server.registerTool(
             text:
               `Appended ${newEntries.length} entry/entries to summary.\n` +
               `Total entries in summary: ${summary.length}\n` +
-              `Summary file: ${summaryPath}`,
+              `Summary file: ${summaryPath}` +
+              purgeNote,
           },
         ],
       };
