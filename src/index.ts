@@ -54,11 +54,13 @@ function getSummaryPath(account: string): string {
 }
 
 const VALID_ACCOUNTS = ["work", "secondary"] as const;
+const accounts = loadAccounts();
+const accountDescription = VALID_ACCOUNTS
+  .map((key) => `"${key}" (${accounts[key]?.label ?? key})`)
+  .join(" or ");
 const accountSchema = z
   .enum(VALID_ACCOUNTS)
-  .describe(
-    "Which email account to use: \"work\" (sj@sjdev.co) or \"secondary\" (ken.jannette@gmail.com)"
-  );
+  .describe(`Which email account to use: ${accountDescription}`);
 
 // ---------------------------------------------------------------------------
 // Load classification prompt
@@ -169,7 +171,7 @@ server.registerPrompt(
   "review_emails",
   {
     description:
-      "Review WORK inbox (sj@sjdev.co): classify job application emails (A/B/C/D), delete A+C, summarize B+D.",
+      `Review WORK inbox (${accounts.work?.label ?? "work"}): classify job application emails (A/B/C/D), delete A+C, summarize B+D.`,
   },
   () => {
     const instructions = loadClassificationPrompt();
@@ -197,7 +199,7 @@ server.registerPrompt(
   "review_secondary_emails",
   {
     description:
-      "Review SECONDARY inbox (ken.jannette@gmail.com): classify job application emails (A/B/C/D), delete A+C, summarize B+D.",
+      `Review SECONDARY inbox (${accounts.secondary?.label ?? "secondary"}): classify job application emails (A/B/C/D), delete A+C, summarize B+D.`,
   },
   () => {
     const instructions = loadClassificationPrompt();
