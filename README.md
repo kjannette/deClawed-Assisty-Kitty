@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.png" alt="Declawed" width="120" />
+</p>
+
 # Declawed
 
 ###  A configurable, prompt purrr-fectable LLM mail management assisty-kitty.
