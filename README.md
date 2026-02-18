@@ -4,14 +4,15 @@
 
 # Declawed
 
-###  A configurable, prompt purrr-fectable LLM mail management assisty-kitty.
+###  A configurable, prompt purrr-fectable LLM mail/life management assisty-kitty.
 ###  Perfect for tedious job hunts – you know the ones – it feels like the process is driving *you*.
-###  Whirks whiskerous wonders for  forums where good posts are solid-gold but only 10% total volume, vs 90% gregarious noise.
-### With some prompt purrfection and playful experimentation, helps any inbox where you need to cut adjust signal/noise to hone in, and take action on real opportunities,
-###  (Cat) nip that sh*t in the bud.
+###  Whirks whiskerous wonders on forums where solid-gold are 10% volume, vs 90% gregarious babble.
+### With prompt purrfection and process refinement, trims signal/noise anywhere -- avoid missing actionable, profitable opportunities,
+### ^  (Cat) nip that sh*t in the bud.
 
 # Secure
-A local Model Context Protocol (MCP) server integrates an  LLM API, a local model, or whatever your nine lives desire. Questionable security, privacy holes or nasties are not lurking in an opaque supply-chain.
+Your own Local Model Context Protocol (MCP) server integrates an LLM API, a local model, or whatever your nine lives desire. 
+Questionable security configuations, intentionally-trojan'ed spyware/malware and nasties are not lurking behind an opaque supply-chain or closedß-source install.
 
 # Cat-o-matic
 The library easily interfaces with your mail and calendar app APIs, or about any other service you want to plug in... keeping your adulting  moving forward while you chase your tail or take a 19-hour nap in a sunbeam.
