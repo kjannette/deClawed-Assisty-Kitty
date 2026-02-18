@@ -1,272 +1,277 @@
-# Declawed: A Configurable, Promptable AI Mail Assisty Kitty
+# Declawed
 
-A local Model Context Protocol (MCP) server and LLM integration platform. Built to connect to LLM APIs - be itClaude Desktop, *others*... or locally hosted models. Executes your prompts to manage your mail, while you... watch Fellini films, solve climate change, sip Mai Tais, or.... whatever. 
+###  A Configurable, Prompt Purrr-fectable LLM Mail Management Assisty-Kitty.
+###  Perfect for tedious job hunts – you know the ones – it feels like the process is driving *you*. 
+###  (Cat) nip that sh*t in the bud.
 
-Ssssimple. Siamsese, if you please.... Eats the blue-plate-crustacean for breakfast.
+# Secure
+A local Model Context Protocol (MCP) server integrates an  LLM API, a local model, or whatever your nine lives desire. Security/privacy configs are not black-boxed, they are right there for your tweakin'
 
-Infinitely mod-able.  Dead simple. Privacy centric.  
+# Cat-o-mated
+Executes your prompts, to  manage your mail, while you... watch Fellini films, solve climate change, sip Mai Tais, or... whatever.
+
+The library easily interfaces with your mail and calendar app APIs, or about  any other service you want to plug in... to keep things moving  while you chase your tail or take a 19-hour nap in a sunbeam.
 
 ---
 
-# Scope 
+# Scope and Architecture
 
-## Current implementation contemplates: Claude Desktop + Custom, Local Model Context Protocol Server + Commercial SMTP Server (MX'config’d properly) + your DNS-config’d XXX.YYY
+## Current implementation contemplates:
+ -- Claude Desktop (plugging in your choice should be easy. Plus we'll be building our own UI soon-ishh).
+ -- A Custom Local Model Context Protocol Server
+ -- A DNS-config’d domain, with MX records pointing to:
+ -- A commercial or self-hosted SMTP Server (MX'config’d and with a sensible API)
 
 ---
 
-### 1. Install: Node.js
+### 1. Install Node.js
 
- Node.js v16 or higher must be installed.
+Node.js v16+ required.
 
 ```bash
 node --version
 npm --version
 ```
 
-If not installed, download from [nodejs.org](https://nodejs.org/).
+If not installed, grab it from [nodejs.org](https://nodejs.org/).
 
-### 2. Initialize the Project
-
-```bash
-mkdir assistant
-cd assistant
-npm init -y
-```
-
-### 3. Install Dependencies
+### 2. Clone and Install
 
 ```bash
-npm install @modelcontextprotocol/sdk zod@3 googleapis
-npm install -D @types/node typescript
+git clone <repo-url>
+cd deClawed-Assity-Kitty
+npm install
 ```
 
-Create the source directory and entry file:
+### 3. Set Up Google Cloud Credentials
 
-```bash
-mkdir src
-touch src/index.ts
-```
-
-### 4. Configure the Project
-
-#### 4a. Update `package.json`
-
-Set the module type, binary entry, and build scripts:
-
-```json
-{
-  "type": "module",
-  "bin": {
-    "assistant": "./build/index.js"
-  },
-  "scripts": {
-    "build": "tsc && chmod 755 build/index.js",
-    "auth": "npm run build && node build/auth.js"
-  },
-  "files": ["build"]
-}
-```
-
-#### 4b. Create `tsconfig.json` in the project root
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "Node16",
-    "moduleResolution": "Node16",
-    "outDir": "./build",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
-}
-```
-
-### 5. Write the Server Code
-
-The server source lives in `src/index.ts`. It registers three tools and one prompt with the MCP server:
-
-- **`fetch_new_emails`** -- fetches unread Gmail messages
-- **`delete_emails`** -- trashes messages by ID
-- **`append_to_summary`** -- logs classified emails to `summary.json`
-- **`review_emails`** (prompt) -- feeds Claude the classification instructions
-
-The auth helper lives in `src/auth.ts`, used only for the one-time OAuth setup.
-
-### 6. Set Up Google Cloud Credentials
-
-#### 6a. Create a Google Cloud Project
+#### 3a. Create a Google Cloud Project
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Sign in with the Google account that owns the target Gmail
-3. Click the project dropdown (top-left) and select **New Project**
+3. Click the project dropdown (top-left) > **New Project**
 4. Name it (e.g., `assistant-mcp`) and click **Create**
 5. Select the new project from the dropdown
 
-#### 6b. Enable the Gmail API
+#### 3b. Enable APIs
 
-1. Go to **APIs & Services > Library** ([direct link](https://console.cloud.google.com/apis/library))
-2. Search for **Gmail API**
-3. Click it, then click **Enable**
+In **APIs & Services > Library**, enable:
+- **Gmail API**
+- **Google Sheets API** (if using recruiter contact logging)
+- **Google Calendar API** (if using calendar event creation)
 
-#### 6c. Configure the OAuth Consent Screen
+#### 3c. Configure the OAuth Consent Screen
 
 1. Go to **Google Auth Platform > Branding** (or **APIs & Services > OAuth consent screen**)
 2. Set user type to **External**, click **Create**
 3. Fill in app name, support email, and developer contact email
 4. Save and continue
 
-#### 6d. Add the Gmail Scope
+#### 3d. Add OAuth Scopes
 
-1. Go to **Google Auth Platform > Data Access** (or the Scopes page)
-2. Click **Add or remove scopes**
-3. Add: `https://www.googleapis.com/auth/gmail.modify`
-4. Save
+In **Google Auth Platform > Data Access**, add:
+- `https://www.googleapis.com/auth/gmail.modify`
+- `https://www.googleapis.com/auth/spreadsheets` (for Sheets integration)
+- `https://www.googleapis.com/auth/calendar.events` (for Calendar integration)
 
-#### 6e. Add Yourself as a Test User
+#### 3e. Add Yourself as a Test User
 
-1. Go to **Google Auth Platform > Audience**
-2. Add your Gmail address as a test user
+Go to **Google Auth Platform > Audience** and add each Gmail address you'll use.
 
-#### 6f. Create OAuth Client Credentials
+#### 3f. Create OAuth Client Credentials
 
 1. Go to **Google Auth Platform > Clients** (or **APIs & Services > Credentials**)
-2. Click **Create Client** (or **+ Create Credentials > OAuth client ID**)
-3. Application type: **Desktop app**
-4. Name it anything (e.g., `Assistant MCP Desktop`)
-5. Click **Create**
-6. **Download the JSON** file
-7. Rename it to `credentials.json`
-8. Move it to the project root: `/Users/kjannette/assistant/credentials.json`
+2. Click **Create Client** > Application type: **Desktop app**
+3. **Download the JSON**, rename it to `credentials.json`
+4. Place it in the project root
 
-### 7. Authorize Your Gmail Account
+### 4. Configure Accounts
 
-Build the project and run the auth script:
+Create `accounts.json` in the project root. Each key is an account alias with its own token file and optional Sheets/Calendar config:
 
-```bash
-npm run auth
+```json
+{
+ "work": {
+   "label": "you@yourdomain.com",
+   "tokenFile": "token.json",
+   "spreadsheetId": "YOUR_GOOGLE_SHEET_ID",
+   "calendarId": "primary"
+ },
+ "secondary": {
+   "label": "you@gmail.com",
+   "tokenFile": "token-secondary.json"
+ }
+}
 ```
 
-This will:
+- **`label`** -- display name (typically the email address)
+- **`tokenFile`** -- per-account OAuth token (auto-generated during auth)
+- **`spreadsheetId`** -- Google Sheets ID for recruiter contact logging (optional)
+- **`calendarId`** -- Google Calendar ID for event creation (optional, `"primary"` uses the default calendar)
+
+### 5. Authorize Gmail Accounts
+
+Build and run the auth script for each account:
+
+```bash
+npm run auth              # authorizes the "work" account
+npm run auth -- secondary # authorizes the "secondary" account
+```
+
+Each run will:
 1. Print a URL -- open it in your browser
-2. Sign in with your Google account and click **Allow**
-3. You'll land on a "localhost refused to connect" page (this is normal)
-4. Copy the **entire URL** from the browser address bar
-5. Paste it into the terminal prompt
-6. The script extracts the auth code and saves `token.json`
+2. Sign in and click **Allow**
+3. You'll land on a "localhost refused to connect" page (normal)
+4. Copy the **entire URL** from the address bar and paste it back into the terminal
+5. The script saves the token file (e.g., `token.json` or `token-secondary.json`)
 
-You only need to do this once. The token auto-refreshes.
+You only need to do this once per account. Tokens auto-refresh.
 
-### 8. Build the Server
+### 6. Write the Prompts
+
+Two plain-text prompt files in `src/prompts/` control the workflow:
+
+| File | Phase | Purpose |
+|------|-------|---------|
+| `src/prompts/classify-emails.txt` | 1 -- Classification | Defines categories A/B/C/D and how to sort emails |
+| `src/prompts/take-action-on-emails.txt` | 2 -- Action | Tells the LLM what to do with each category (delete, log, schedule, etc.) |
+
+**Tips:**
+- Use clear, explicit category definitions with example language
+- Handle ambiguous cases (e.g., "If an email both acknowledges receipt AND requests action, classify as B")
+- Prompt files are loaded at runtime -- edit them anytime, no rebuild required
+
+### 7. Build
 
 ```bash
 npm run build
 ```
 
-This compiles `src/*.ts` into `build/*.js`.
+Compiles `src/**/*.ts` into `build/`.
 
-### 9. Write the Classification Prompt
+### 8. Configure Claude Desktop
 
-Create a file called `classify-emails.txt` in the project root. This file contains the plain-text instructions that tell Claude how to classify your emails.
-
-**Tips for writing the prompt:**
-- Use clear, explicit category definitions with example language for each
-- Handle ambiguous cases (e.g., "If an email both acknowledges receipt AND requests action, classify it as B")
-- Define the exact actions to take for each category (delete, summarize, etc.)
-- Specify what fields to include in summaries
-- Keep it in plain text -- no JSON or special formatting needed
-- The file is loaded at runtime, so you can edit it without rebuilding the server
-
-**File location:** Must be at the project root as `classify-emails.txt`.
-
-### 10. Configure Claude Desktop
-
-Edit the Claude Desktop config file:
+Edit your Claude Desktop config:
 
 ```bash
 code ~/Library/Application\ Support/Claude/claude_desktop_config.json
 ```
 
-Add the `assistant` server to the `mcpServers` object:
+Add the server:
 
 ```json
 {
-  "mcpServers": {
-    "assistant": {
-      "command": "/ABSOLUTE/PATH/TO/node",
-      "args": [
-        "/Users/kjannette/assistant/build/index.js"
-      ]
-    }
-  }
+ "mcpServers": {
+   "assistant": {
+     "command": "/ABSOLUTE/PATH/TO/node",
+     "args": [
+       "/ABSOLUTE/PATH/TO/deClawed-Assity-Kitty/build/index.js"
+     ]
+   }
+ }
 }
 ```
 
-Replace `/ABSOLUTE/PATH/TO/node` with the output of `which node`.
+Replace paths with the output of `which node` and your actual project location.
 
-### 11. Restart Claude Desktop
+### 9. Restart Claude Desktop
 
-Fully quit Claude Desktop (**Cmd+Q**, not just close the window) and reopen it. The `assistant` server should now appear under **Connectors** in the chat input.
+Fully quit (**Cmd+Q**, not just close the window) and reopen. The `assistant` server should appear under **Connectors**.
 
 ---
 
-## Usage Guide
+## MCP Tools
 
-### Prompt Loader
+| Tool | Description |
+|------|-------------|
+| `fetch_new_emails` | Fetches unread emails for a given account. Classification and action prompts are automatically appended to the response. |
+| `delete_emails` | Moves emails to trash by Gmail message ID. Used for categories A (acknowledgements) and C (rejections). |
+| `append_to_summary` | Logs classified emails to per-account summary files in `mailSummaries/`. Entries older than 30 days are auto-purged. |
+| `log_recruiter_contact` | Logs or updates recruiter contact info in a Google Sheet. Merges rows by recruiter email + role. |
+| `create_calendar_event` | Creates a Google Calendar event for scheduled calls/interviews. Skips past dates. Includes meeting links and contact info. |
 
-The server reads `classify-emails.txt` from the project root at runtime. To change classification behavior, edit that file directly -- no rebuild required. The updated instructions take effect on the next tool call.
+## MCP Prompts
 
-### MCP Prompt: `review_emails`
+| Prompt | Account | Description |
+|--------|---------|-------------|
+| `review_emails` | work | Loads the classification + action prompts for the work inbox |
+| `review_secondary_emails` | secondary | Same workflow for the secondary inbox |
 
-A registered MCP prompt available in Claude Desktop's Connectors menu. When invoked, it feeds Claude the full contents of `classify-emails.txt` as a user message, giving Claude all the classification criteria before it calls any tools. This is the recommended way to trigger the workflow -- it ensures Claude has the complete instructions every time.
+Invoke these from Claude Desktop's Connectors menu, or just type "Review my inbox" / "Review my secondary inbox."
 
-### `fetch_new_emails` Enrichment
+---
 
-Every time `fetch_new_emails` is called, the classification instructions from `classify-emails.txt` are appended to the response alongside the email data. This means Claude always sees the rules with the data, even if the `review_emails` prompt was not explicitly invoked. Belt and suspenders.
+## Two-Phase Workflow
 
-### Running the Workflow
+**Phase 1 -- Classify**
 
-1. Open Claude Desktop
-2. Type: **"Review my inbox"** (or invoke the `review_emails` prompt from Connectors)
-3. Claude will:
-   - Call `fetch_new_emails` to retrieve unread messages
-   - Classify each email as A, B, C, or D using the prompt instructions
-   - Call `delete_emails` for categories A and C
-   - Call `append_to_summary` for categories B and D
-4. Results are displayed in the chat and saved to `summary.json`
+The LLM calls `fetch_new_emails`, which returns email data with the classification instructions from `classify-emails.txt` appended. Each email is sorted into:
 
-### Key Commands
+| Category | Meaning | Action |
+|----------|---------|--------|
+| **A** | Acknowledgement / auto-reply | Delete |
+| **B** | Advancement to next step | Summarize + log |
+| **C** | Rejection | Delete |
+| **D** | Other / uncategorized | Summarize + log |
+
+**Phase 2 -- Act**
+
+Using `take-action-on-emails.txt`, the LLM:
+- Calls `delete_emails` for A + C
+- Calls `append_to_summary` for B + D
+- Calls `log_recruiter_contact` to track contacts in Sheets (if configured)
+- Calls `create_calendar_event` for any scheduled interviews/calls (if configured)
+
+---
+
+## Key Commands
 
 | Command | Purpose |
 |---------|---------|
-| `npm run build` | Recompile after editing `src/index.ts` |
-| `npm run auth` | Re-authorize Gmail (only if `token.json` deleted/expired) |
-| Cmd+Q Claude Desktop, reopen | Pick up server changes after a rebuild |
+| `npm run build` | Recompile after editing source files |
+| `npm run auth` | Authorize the default (work) account |
+| `npm run auth -- secondary` | Authorize the secondary account |
+| `npm test` | Run the test suite |
+| `npm run test:watch` | Run tests in watch mode |
 
 ---
 
 ## Project Structure
 
 ```
-assistant/
+deClawed-Assity-Kitty/
 ├── src/
-│   ├── index.ts          # MCP server source (tools + prompt)
-│   └── auth.ts           # One-time OAuth setup script
-├── build/
-│   ├── index.js          # Compiled server (Claude Desktop runs this)
-│   └── auth.js           # Compiled auth script
-├── classify-emails.txt   # Classification prompt (plain text, edit anytime)
-├── credentials.json      # Google OAuth client credentials (from Cloud Console)
-├── token.json            # Gmail access/refresh token (auto-generated)
-├── summary.json          # Output file where B/D emails are logged
-├── package.json          # Project config and scripts
-├── tsconfig.json         # TypeScript compiler config
-└── README.md             # This file
+│   ├── index.ts                         # Entry point -- imports modules, starts server
+│   ├── McpServer.ts                     # MCP server instance
+│   ├── auth.ts                          # Multi-account OAuth setup script
+│   ├── loaders/
+│   │   └── prompt-config-loaders.ts     # Account, prompt, and OAuth client loaders
+│   ├── prompt-controller-service/
+│   │   └── prompt-controller-service.ts # MCP prompt registration
+│   ├── prompts/
+│   │   ├── classify-emails.txt          # Phase 1: classification instructions
+│   │   └── take-action-on-emails.txt    # Phase 2: action instructions
+│   └── tools/
+│       ├── tools-email.ts               # fetch, delete, append_to_summary
+│       ├── tools-calendar.ts            # create_calendar_event
+│       └── tools-spreadsheet.ts         # log_recruiter_contact
+├── test/
+│   ├── fixtures/
+│   │   └── mock-emails.ts              # Mock Gmail API responses
+│   ├── integration/
+│   │   └── email-workflow.test.ts       # Integration tests
+│   └── unit/
+│       └── email-parsing.test.ts        # Unit tests for parsing helpers
+├── mailSummaries/                       # Per-account summary output (auto-generated)
+├── build/                               # Compiled JS (auto-generated)
+├── accounts.json                        # Multi-account configuration
+├── credentials.json                     # Google OAuth client credentials
+├── token*.json                          # Per-account OAuth tokens (auto-generated)
+├── package.json
+├── tsconfig.json
+├── vitest.config.ts
+└── README.md
 ```
+
 
 
