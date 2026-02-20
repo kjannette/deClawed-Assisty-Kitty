@@ -4,9 +4,9 @@
 
 # Declawed: your kuddly assisty-kitty
 
-# Inbox brimming with stank-ass algorithmically-generated turds?
+## Inbox brimming with stank-ass algorithmically-generated turds?
 
-# (Cat) nip that sh*t in the bud!!!
+### (Cat) nip that sh*t in the bud!!!
 
 ###  Declawed is a configurable, prompt purrr-fectable LLM mail management assisty-kitty.
 ###  Puuurfect for tedious daily sorts/classification/responses
