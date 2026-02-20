@@ -9,34 +9,41 @@
 ## The "why":
 
 ###  Declawed is a configurable, prompt purrr-fectable LLM mail management assisty-kitty.
-###  Puuurfectly more private than the other options.
+###  More private than most other options (not purrfect yet - but we aim to get there).
 ###  More accurate actions/results (read on).
-###  Eliminates the frustrating feeling that you'll never get the dandlging, catnip-stuffed mouse you've been leaping at forever.
+###  Eliminates that frustrating feeling you'll never get the dandlging, catnip-stuffed mouse you've been leaping at.
 
-# Privacy:  mMore than the blue-plate crustacean
+# Privacy: more than the blue-plate crustacean
 
-A local Model Context Protocol (MCP) server integrates with an LLM API you choose -- both of which offer greater ops and privacy control and transparency.
+Your own local Model Context Protocol (MCP) server integrates with your preferred LLM API.
+This means greater choice, transparency and ops control.
 
 Avoid flakey (molty?) black box installs, billed as QUICK AND EASY! 
 ...also, loaded with more Trojans than an Olympic Village. Silent processes: data harvesting phone-homes, behavioral analytics reporting, telemetry backdoors - all the nasties crawling the dark detritus.  
-You know lobsters eat poop, right?
 
-# Declawed: **actually** easy, **consistetly effective**
+💩 You know lobsters eat poop, right? 💩
 
-Stop drilling down byzantine menus in mail, scehduling and sheets platforms to 1. configure filters that only ever work 30% of the time 2. change every three months.
+# Declawed: **actually** easy, **demonstrably**  more effective
 
-Write simple, declarative prompts instead... they're like wrapping slop, bulk-mail's paws in tin foil and tossing them in the bathtub.
+Stop drilling down byzantine menus in mail, scehduling and sheets platformsto 1. configure filters that only ever work 20% of the time 2. change in functionality and scope  every three months.
+
+Write simple, declarative prompts instead. It's like wrapping bulk-mail's paws in tin foil and tossing them in a bathtub.
 
 Prompts
-1. Use semantic grouping, organizing by kessage intent, purpose, and context.
-2. Our prompt templates are evaluated using, for exmaple, cosine similarity scoring and ROUGE scoring to
-3. Maxiinze keeping the gold and tossing the junk in rreviewing streams  where actionable insights are 10% of the signal/noise.
 
-### With refinement, prompting runs auto: cleaning that stank litter(in)box before you get a whiff.
-### Morning greets you with a fresh, spring-meadow aroma of opportunities and insights -- not an avalanche of turds -- like its f*cxing 1998 again.
+1. Use semantic grouping, organizing by message intent, purpose, and context.
+2. The prompt templates in our "built in" library are evaluated using, for exmaple, cosine similarity scoring and ROUGE scoring...
+3. Basically, we watch the watchers to max analyzational effectiveness in and correct choice of derlegated actions.
+3. An example: keep the gold, toss the junk when reviewing, for example,  forums where actionable insights are gold, but only 10% of the signal.
 
-# Wirign up your kitty is simple
-Assisty-kitty easily interfaces with mail and calendar and other app APIs (about any other service you want to plug in) ... it keeps things moving so you can go you chase your tail or take a 19-hour nap in a sunbeam.
+### Prompting: easliy configured to cron: cleaning the litter(in)box before the stank wafts into the kitchen.
+### Image morning greeting you with the fresh, spring-meadow aroma of opportunities and insights -- not an avalanche of turds 
+
+# -- you just might feel like its f*cxing 1998 again.
+
+# Wiring up your kitty
+
+Assisty-kitty easily interfaces with mail and calendar and other app APIs (about any other service you want to plug in) ... it keeps things moving so you can go you chase laseer pointers or enjoy a 19-hour nap in a sunbeam.
 
 ---
 
@@ -46,11 +53,12 @@ Assisty-kitty easily interfaces with mail and calendar and other app APIs (about
 -- Claude Desktop (as UI - proprietary UI coming soonish)
 -- Building/Connecting a Local Model Context Protocol Server
 -- A DNS-config’d domain, with MX records pointing to:
--- A commercial or self-hosted SMTP Serve
+-- A commercial or self-hosted SMTP Server
 
 ## Coming soonish:
--- Our own custom UI
--- Suppost for wiring up local LLMs.
+-- Proprietary custom UI.
+-- Support for Hugging Face models galore.
+-- Supposrt for wiring to local LLMs.
 
 # Setup
 
@@ -359,11 +367,3 @@ deClawed-Assity-Kitty/
 ├── vitest.config.ts
 └── README.md
 ```
-
-
-
-
-
-
-
-
