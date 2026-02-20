@@ -9,8 +9,9 @@ import path from "path";
 // ---------------------------------------------------------------------------
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 export const PROJECT_ROOT = path.resolve(__dirname, "..", "..");
-const CREDENTIALS_PATH = path.join(PROJECT_ROOT, "credentials.json");
-const ACCOUNTS_PATH = path.join(PROJECT_ROOT, "accounts.json");
+const SECRETS_DIR = path.join(PROJECT_ROOT, "accountsAndCredentials");
+const CREDENTIALS_PATH = path.join(SECRETS_DIR, "credentials.json");
+const ACCOUNTS_PATH = path.join(SECRETS_DIR, "accounts.json");
 const CLASSIFY_PROMPT_PATH = path.join(PROJECT_ROOT, "classify-emails.txt");
 const ACTION_PROMPT_PATH = path.join(
   PROJECT_ROOT, "src", "prompts", "take-action-on-emails.txt"
@@ -46,7 +47,7 @@ export const getTokenPath = (account: string): string => {
       `Unknown account "${account}". Available accounts: ${available}`
     );
   }
-  return path.join(PROJECT_ROOT, acct.tokenFile);
+  return path.join(SECRETS_DIR, acct.tokenFile);
 };
 
 export const getSummaryPath = (account: string): string => {

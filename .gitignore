@@ -1,11 +1,11 @@
 node_modules/
 build/
 
-# OAuth secrets
-credentials.json
-credentials.*
-token*.json
-accounts.json
+# OAuth secrets (inside accountsAndCredentials/, example files are NOT ignored)
+accountsAndCredentials/credentials.json
+accountsAndCredentials/accounts.json
+accountsAndCredentials/token*.json
+!accountsAndCredentials/*.example.json
 
 # Runtime output
 mailSummaries/

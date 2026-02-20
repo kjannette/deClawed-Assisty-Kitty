@@ -5,8 +5,9 @@ import readline from "readline";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const PROJECT_ROOT = path.resolve(__dirname, "..");
-const CREDENTIALS_PATH = path.join(PROJECT_ROOT, "credentials.json");
-const ACCOUNTS_PATH = path.join(PROJECT_ROOT, "accounts.json");
+const SECRETS_DIR = path.join(PROJECT_ROOT, "accountsAndCredentials");
+const CREDENTIALS_PATH = path.join(SECRETS_DIR, "credentials.json");
+const ACCOUNTS_PATH = path.join(SECRETS_DIR, "accounts.json");
 
 const SCOPES = [
   "https://www.googleapis.com/auth/gmail.modify",
@@ -26,7 +27,7 @@ function resolveTokenPath(accountKey: string): string {
       `Unknown account "${accountKey}". Available: ${available}`
     );
   }
-  return path.join(PROJECT_ROOT, acct.tokenFile);
+  return path.join(SECRETS_DIR, acct.tokenFile);
 }
 
 async function authorize(): Promise<void> {
@@ -44,7 +45,7 @@ async function authorize(): Promise<void> {
         "1. Go to https://console.cloud.google.com/\n" +
         "2. Create a project and enable the Gmail, Sheets, and Calendar APIs\n" +
         "3. Create OAuth 2.0 credentials (Desktop app type)\n" +
-        "4. Download the JSON and save it as credentials.json in the project root\n"
+        "4. Download the JSON and save it as credentials.json in the accountsAndCredentials/ folder\n"
     );
     process.exit(1);
   }
