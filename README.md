@@ -8,7 +8,7 @@ Inbox brimming with stank, algorithmically-generated logs?  Wanna cut the crap a
 
 ### (Cat) nip it in the bud!!
 
-# The "why":
+# The "why"
 
 ###  Declawed is a configurable, prompt purrr-fectable LLM mail and task automation assisty-kitty.
 ###  More private than other options (not purrfect *yet* - but privacy is our number one goal with every release).
