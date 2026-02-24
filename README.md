@@ -17,17 +17,20 @@ Inbox brimming with stank, algorithmically-generated logs?  Wanna cut the crap a
 
 # Privacy: more than the blue-plate crustacean
 
-Your own local Model Context Protocol (MCP) server integrates with your preferred LLM API.
-Each step offers greater control, configurability and transparency over permissions.
+💩 You know crustacean are detritivores, right? 💩
 
-Avoid the flakey (molty?) black-box installs that are loaded with more Trojans than an Olympic Village. Silent/dark processes, data harvesting phone-homes, behavioral analytics, telemetry backdoors - the nasties lurking in the dark detritus.
+💩 If you're not dead, or poop, why be careless about access to your *P4*? 💩
 
-💩 You know lobsters eat poop, right? 💩
+Avoid flakey (molty?) black-box installs that are loaded with more Trojans than an Olympic Village. Dark processes, data harvesting phone-homes, behavioral analytics, telemetry backdoors - the nasties crawling the detritus.
+
+###Configure your own local Model Context Protocol (MCP) server
+## Integrate it with your preferred LLM API, or, better yet, local model.
+## Hello - greater control, configurability and transparency over the perms.
 
 # Simplicity
 ### NLP prompts are **actually** easy and  **demonstrably**  more effective
 
-Stop drilling down byzantine menus in mail, scheduling and workflow platforms to configure filters and actions  that 1. only ever work 20% of the time 2. change in functionality and scope every two months.
+Banish drilling down byzantine menus in mail, scheduling and workflow platforms to configure filters and actions  that 1. only ever work 20% of the time 2. change in functionality and scope every two months.
 
 Write short, declarative prompts instead. It's like wrapping busywork's paws in tinfoil and tossing it in a bathtub.
 
