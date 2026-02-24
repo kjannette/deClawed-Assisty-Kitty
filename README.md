@@ -11,7 +11,7 @@ Inbox brimming with stank, algorithmically-generated logs?  Wanna cut the crap a
 # The "why"
 
 ###  Declawed is a configurable, prompt purrr-fectable LLM mail and task automation assisty-kitty.
-###  More private than other options (not purrfect *yet* - but privacy is our number one goal with every release).
+###  More private than other options (not purrfect *yet* - but privacy is the goal with each new release).
 ###  More accurate actions/results (read on).
 ###  Eliminates the frustrating feeling you'll never get the dangling, catnip-stuffed mouse you've been chasing all week.
 
@@ -23,21 +23,20 @@ Inbox brimming with stank, algorithmically-generated logs?  Wanna cut the crap a
 
 Avoid flakey (molty?) black-box installs that are loaded with more Trojans than an Olympic Village. Dark processes, data harvesting phone-homes, behavioral analytics, telemetry backdoors - the nasties crawling the detritus.
 
-###Configure your own local Model Context Protocol (MCP) server
+### Configure your own local Model Context Protocol (MCP) server, the basics are baked in, right here.
 ## Integrate it with your preferred LLM API, or, better yet, local model.
 ## Hello - greater control, configurability and transparency over the perms.
 
 # Simplicity
-### NLP prompts are **actually** easy and  **demonstrably**  more effective
 
-Banish drilling down byzantine menus in mail, scheduling and workflow platforms to configure filters and actions  that 1. only ever work 20% of the time 2. change in functionality and scope every two months.
+### NLP prompts are easy and **demonstrably** more effective - just talk to your Kitty.
 
-Write short, declarative prompts instead. It's like wrapping busywork's paws in tinfoil and tossing it in a bathtub.
+Banish drilling down byzantine menus in mail, scheduling and workflow platforms to configure filters and actions  that 1. only ever work 20% of the time 2. change in functionality and scope every two months. Write short, declarative prompts. It's like wrapping busywork's paws in tinfoil and tossing it in a bathtub.
 
-Prompts
+# Prompt Composition and Processing
 
 1. Use semantic grouping, organizing by message intent, purpose, and context.
-2. The prompt templates in our "built in" library are evaluated using, for example, cosine similarity, ROUGE scoring and real human feedback.
+2. The prompt templates in the "built in" library are evaluated using, for example, cosine similarity, ROUGE scoring and actual human feedback.
 3. For example: you'll consistently keep the treasure and trash the junk when you task deClawed with reviewing forums/feeds where actionable insights are gold, but only 10% of the signal.
 
 ### Prompting: easily configured to cron: cleaning the litter(in)box before the stank wafts into the whole house.
@@ -45,9 +44,9 @@ Prompts
 
 # -- You just might feel like it' s freakin' 1998 again.
 
-# Wiring up your kitty
+# Wiring your kitty
 
-Assisty-kitty easily interfaces with mail and calendar and other app APIs (about any other service you want to plug in) ... it keeps things moving so you can go chase laser pointers or enjoy a 19-hour nap in a sunbeam.
+Assisty-kitty easily interfaces with mail, calendar and other workflow app APIs (about any service you want to plug in).  It keeps things moving so you can chase laser pointers or enjoy a 19-hour nap in a sunbeam.
 
 ---
 
@@ -149,7 +148,7 @@ Create file `accounts.json` in the project root. Each key is an account alias wi
 - **`spreadsheetId`** -- Google Sheets ID for recruiter contact logging (optional)
 - **`calendarId`** -- Google Calendar ID for event creation (optional, `"primary"` uses the default calendar)
 
-### 5. Authorize Gmail Accounts
+### 5. Authorize Accounts
 
 Build and run the auth script for each account:
 
@@ -167,6 +166,10 @@ Each run will:
 
 You only need to do this once per account. Tokens auto-refresh.
 
+# Pretty much a million workflow platforms integrate using this paradigm. Read their docs:
+
+https://modelcontextprotocol.io/clients
+  
 ### 6. Write the Prompts
 
 Two plain-text prompt files in `src/prompts/` control the workflow:
